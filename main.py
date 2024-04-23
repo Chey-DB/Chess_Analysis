@@ -1,4 +1,5 @@
 from data_extractor import ChessDataExtractor
+from data_analyser import ChessDataAnalyser
 
 
 if __name__ == "__main__":

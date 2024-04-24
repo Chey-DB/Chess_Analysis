@@ -2,10 +2,13 @@ import requests
 import logging
 
 class ChessDataExtractor:
-    def __init__(self, username: str, email: str) -> None:
+    def __init__(self, username: str, email: str, username_for_data=None) -> None:
         self.session = requests.Session()
         self.session.headers.update({"User-Agent": f"username:{username}, email:{email}"})
-        self.url = f"https://api.chess.com/pub/player/{username}/games/archives"
+        if username_for_data is None:         
+            self.url = f"https://api.chess.com/pub/player/{username}/games/archives"
+        else:
+            self.url = f"https://api.chess.com/pub/player/{username_for_data}/games/archives"
         self.all_games_cache = None  # Cache for storing all games data
 
     def safe_request(self, url: str) -> dict:
@@ -44,8 +47,7 @@ class ChessDataExtractor:
         filtered_games = [game for game in all_games if game["url"].split("/")[-2] == game_type]
         return filtered_games
 
-    def extract_pgn(self) -> list[str]:
+    def extract_pgn(self, filtered_games: list[str]) -> list[str]:
         """Extract the PGNs of all games."""
-        all_games = self.get_all_games()
-        pgns = [game["pgn"] for game in all_games]
+        pgns = [game["pgn"] for game in filtered_games]
         return pgns
